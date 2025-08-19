@@ -11,14 +11,14 @@ export const signUp =async (req,res,next)=>{
       const existingUser =await User.findOne({email});
      if(existingUser){
         return res.json({
-          success:"false",
+          success:false,
           message:"User already exists with this email"
         })
       }
 
       if(!validator.isEmail(email)){
         return res.json({
-          success:"false",
+          success:false,
           message:"Invalid email format"
      })}
      
@@ -45,21 +45,21 @@ export const signin=async (req,res,next)=>{
     const {email,password}=req.body;
    if(!email || !password){
     return res.json({
-      success:"false",
+      success:false,
       message:"Email and Password are required"
     })
    }
    const existingUser = await User.findOne({email});
    if(!existingUser){
     return res.json({
-      success:"false",
+      success:false,
       message:"User does not exist with this email"
     })
    }
    const isPasswordValid = bcrypt.compareSync(password,existingUser.password);
    if(!isPasswordValid){
     return res.json({
-      success:"false",
+      success:false,
       message:"Invalid password"
     })
    }
@@ -74,7 +74,7 @@ export const signin=async (req,res,next)=>{
                 maxAge:7*24*60*60*1000
     }
   ).json({
-    success:"true",
+    success:true,
     message:"User signed in successfully",
     user:{
       username:existingUser.username,

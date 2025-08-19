@@ -8,6 +8,8 @@ import About from './pages/About'
 import Header from './components/header'
 import Contact  from './pages/Contact'
 
+
+
 function App() {
   
 
@@ -16,10 +18,11 @@ function App() {
   <Routes>
     <Route path='/' element={<Home />} />
     <Route path='/sign-in' element={<Signin />} />
-    <Route path='/Sign-up' element={< SignUp/>} />
-    <Route path='/Profile' element={<Profile />} />
-    <Route path='/About' element={<About />} />
-    <Route path='/Contact' element={<Contact />} />
+    <Route path='/sign-up' element={< SignUp/>} />
+    <Route path='/profile' element={<Profile />} />
+    <Route path='/about' element={<About />} />
+    <Route path='/contact' element={<Contact />} />
+    <Route path='/home' element={<Home />} />
   </Routes>
   </BrowserRouter>
 }
