@@ -14,6 +14,7 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setloading] = useState(false);
+  const [alert, setAlert]=useState("");
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -54,10 +55,12 @@ const SignUp = () => {
     try {
       setloading(true);
       const res = await axios.post('/api/auth/sign-up', formData);
-      if (res.data.success) {
+      console.log(res.data);
+      if (res.data.success==true) {
         console.log("user created successfully");
       } else {
-        console.log(res.data.message || "Something went wrong");
+        setloading(false);
+        setAlert(res.data.message || "Something went wrong");
       }
       setloading(false);
     } catch (error) {
@@ -186,6 +189,7 @@ const SignUp = () => {
               >
                 {loading ? "creating account.." : "sign up"}
               </button>
+              <p className='text-red-300 W-full text-center'>{alert}</p>
             </form>
 
             <div className="text-center mt-6">
