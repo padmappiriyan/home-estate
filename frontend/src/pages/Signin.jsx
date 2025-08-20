@@ -3,6 +3,8 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import houseImage from '../assets/House.png';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from "axios";
+import { signInStart, signInSuccess, signInFailuer  } from   '../features/userSlice';
+import {useDispatch,useSelector} from 'react-redux';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -10,11 +12,11 @@ const SignIn = () => {
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [errors,setErrors]=useState({});
+  const {loading, error}=useSelector((state)=>state.user);
   const [alert, setAlert] = useState("");
   const navigate = useNavigate();
-
+  const dispatch=useDispatch();
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -42,22 +44,21 @@ const SignIn = () => {
     if (!validateForm()) return;
 
     try {
-      setLoading(true);
-      console.log("Logging in with", formData);
-
+      dispatch(signInStart());
       const res=await axios.post('/api/auth/sign-in',formData);
       console.log(res.data);
       if(res.data.success){
+        dispatch(signInSuccess(res.data.user));
         navigate('/home', { replace: true });
       }
       else{
+        dispatch(signInFailuer(res.data.message || "Network error"));
         setAlert(res.data.message);
        
       }
       
     } catch (error) {
-      setLoading(false);
-      console.error(error);
+      dispatch(signInFailuer(error?.response?.data?.message || "Network error"));
       setAlert("Error signing in. Please try again.");
     }
   };
@@ -159,7 +160,7 @@ const SignIn = () => {
             
             <button
               type="button"
-              className="w-full flex items-center justify-center gap-3 bg-white text-gray-800 font-medium py-3 px-6 rounded-xl shadow hover:bg-gray-100 transition"
+              className="w-full flex items-center justify-center gap-3 bg-white text-gray-800 font-medium py-3 px-6 rounded-xl shadow hover:bg-gray-100 transition cursor-pointer"
             >
               <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" className="w-5 h-5" />
               Sign in with Google
