@@ -16,6 +16,10 @@ const userSchema=new mongoose.Schema({
         required:true,
         
     },
+    profilePicture:{
+        type:String,
+        default:"https://www.lasalle.edu/wp-content/uploads/2023/03/default-profile-photo-30-300x300.png"
+    }
     
 },{timestamps:true});
 
