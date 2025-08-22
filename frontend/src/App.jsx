@@ -6,6 +6,7 @@ import Profile from './pages/Profile';
 import About from './pages/About';
 import Header from './components/Header';
 import Contact from './pages/Contact';
+import PrivateRoute from './components/PrivateRoute';
 
 
 function App() {
@@ -16,7 +17,11 @@ function App() {
         <Route key="home" path="/" element={<Home />} />
         <Route key="signin" path="/sign-in" element={<Signin />} />
         <Route key="signup" path="/sign-up" element={<SignUp />} />
+
+        <Route  element={<PrivateRoute />}>
         <Route key="profile" path="/profile" element={<Profile />} />
+        </Route>
+
         <Route key="about" path="/about" element={<About />} />
         <Route key="contact" path="/contact" element={<Contact />} />
       </Routes>
