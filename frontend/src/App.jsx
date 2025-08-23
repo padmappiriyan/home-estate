@@ -7,10 +7,11 @@ import About from './pages/About';
 import Header from './components/Header';
 import Contact from './pages/Contact';
 import PrivateRoute from './components/PrivateRoute';
-
+import './App.css'
 
 function App() {
   return (
+    <div className=''>
     <BrowserRouter>
       <Header />
       <Routes>
@@ -26,6 +27,7 @@ function App() {
         <Route key="contact" path="/contact" element={<Contact />} />
       </Routes>
     </BrowserRouter>
+    </div>
   );
 }
 

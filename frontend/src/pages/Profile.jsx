@@ -5,19 +5,21 @@ import Profile_card from '../components/Profile_card';
 
 export default function Profile() {
   return (
-    <div className="h-screen relative">
+    <div className="h-dvh relative">
      
       <div className="h-2/3">
         <Hero />
       </div>
 
-      
-      <div className="absolute top-1/2 left-[18px] w-1/2 h-1/3">
+     <div className='flex itmes-center justify-between  absolute top-1/2  p-4 w-full h-full'>
+      <div className="w-full h-full p-5">
         <Profile_form />
       </div>
-      <div className='absolute top-1/2 right-[18px] w-1/2 h-1/3'>
+      <div className='w-full h-full p-5 '>
       <Profile_card />
       </div>
+    </div>
+      
     </div>
   );
 }
