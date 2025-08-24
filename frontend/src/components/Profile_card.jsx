@@ -52,29 +52,7 @@ export default function Profile_card() {
   };
 
   return (
-    <div className="relative  bg-white rounded-xl p-4 border border-gray-300  mx-auto">
-     
-      <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
-        <img
-          src={currentUser.profilePicture || 'https://via.placeholder.com/150'}
-          alt={currentUser.username || 'User Profile'}
-          className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-lg"
-        />
-      </div>
-
-      
-      <div className="mt-20 space-y-4 text-center">
-        <div>
-          <span className="block font-medium text-gray-700">Username:</span>
-          <span className="text-gray-600">{currentUser.username || 'N/A'}</span>
-        </div>
-        <div>
-          <span className="block font-medium text-gray-700">Email:</span>
-          <span className="text-gray-600">{currentUser.email || 'N/A'}</span>
-        </div>
-      </div>
-
-      
+    <div className="relative  bg-white rounded-xl p-8 border border-gray-300  mx-auto">
       <div className="bg-[#c9b1e1]  rounded-xl p-8 opacity-65 mt-8">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-semibold text-gray-800">Security</h3>
