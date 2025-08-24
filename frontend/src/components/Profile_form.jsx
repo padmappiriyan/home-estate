@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState,useRef,useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Edit3, X, Save, User, Mail, Lock, Camera } from "lucide-react";
 
 export default function Profile_form() {
+  const fileRef = useRef(null);
   const currentUser = useSelector((state) => state.user.currentUser);
 
   const [userData] = useState({
@@ -16,7 +17,17 @@ export default function Profile_form() {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(userData);
   const [loading, setLoading] = useState(false);
+  const [image,setImage] =useState(undefined);
+  console.log(image);
+  useEffect(()=>{
+    if(image){
+      handleFileUpload(image);
+    }
 
+  },[image])
+  const handleFileUpload = async(image) =>{
+    
+  }
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -43,10 +54,12 @@ export default function Profile_form() {
       <div className="bg-white rounded-xl p-8 border border-gray-300 shadow-2xl relative">
         
         <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
+          <input type="file" ref={fileRef} hidden accept="image/*" onChange={(e)=>setImage(e.target.files[0])}/>
           <img
             src={formData.profilePicture}
             alt={formData.username || "User Profile"}
-            className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-lg"
+            className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-lg  cursor-pointer"
+            onClick={()=> fileRef.current.click()}
           />
           {isEditing && (
             <button
