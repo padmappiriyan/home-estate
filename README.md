@@ -12,13 +12,13 @@ Dream Home Real Estate Platform is a secure property portal with admin controls 
 
 ## 🔑 Core Features
 
-### ✅ Admin Panel
+###  Admin Panel
 - Add/Manage property listings
 - View all properties
 - View registered users
 - Delete user accounts
 
-### ✅ User Experience
+###  User Experience
 - Secure login (JWT & Google OAuth)
 - Browse properties with detailed info (price, location, bedrooms, etc.)
 - Responsive design across devices
@@ -50,5 +50,5 @@ Dream Home Real Estate Platform is a secure property portal with admin controls 
 
 ---
 
-## 📂 Folder Structure
+
 
