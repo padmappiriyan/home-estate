@@ -26,9 +26,7 @@ export default function Profile_form() {
   const handleSaveProfile = async () => {
     setLoading(true);
     try {
-      // Simulate saving the profile data
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulated delay
-      console.log("Profile saved:", formData);
+     
       setIsEditing(false);
     } catch (error) {
       console.error("Error saving profile:", error);
@@ -39,7 +37,7 @@ export default function Profile_form() {
 
   return (
     <div className="h-full">
-      <div className="bg-white rounded-3xl p-8 border border-gray-300 shadow-2xl">
+      <div className="bg-white rounded-xl p-8 border border-gray-300 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-semibold text-gray-800">
             Profile Information
@@ -115,7 +113,7 @@ export default function Profile_form() {
             <button
               onClick={handleSaveProfile}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
+              className="w-full bg-gradient-to-r  from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
             >
               <Save className="w-5 h-5" />
               <span>{loading ? "Saving..." : "Save Changes"}</span>

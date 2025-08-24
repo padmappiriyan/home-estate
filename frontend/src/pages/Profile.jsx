@@ -13,8 +13,8 @@ export default function Profile() {
         <Hero />
       </div>
 
-     <div className='flex itmes-center justify-between  absolute top-1/2  p-4 w-full h-full'>
-      <div className="w-full h-full p-5">
+     <div className='flex itmes-center justify-between  absolute top-1/2  p-2 w-full h-full '>
+      <div className="w-full h-full p-5 ">
         <Profile_form />
       </div>
       <div className='w-full h-full p-5 '>
