@@ -3,7 +3,9 @@ import Hero from '../components/Hero';
 import Profile_form from '../components/Profile_form';
 import Profile_card from '../components/Profile_card';
 
+
 export default function Profile() {
+ 
   return (
     <div className="h-dvh relative">
      
