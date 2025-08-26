@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import houseImage from '../assets/House.png';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from "axios";
+import { axiosInstance } from '../config/api';
 import { signInStart, signInSuccess, signInFailuer  } from   '../features/userSlice';
 import {useDispatch,useSelector} from 'react-redux';
 import {GoogleAuthProvider,getAuth,signInWithPopup} from 'firebase/auth';
@@ -33,11 +33,12 @@ const SignIn = () => {
      const auth=getAuth(app);
      const result=await signInWithPopup(auth,provider)
      console.log(result);
-     const res= await axios.post('/api/auth/google-sign-in',{
+     const res= await axiosInstance.post('/api/auth/google-sign-in',{
       name:result.user.displayName,
       email:result.user.email,
       image:result.user.photoURL
      })
+     console.log(res);
      if(res.data.success){
         dispatch(signInSuccess(res.data.user))
      }
@@ -68,7 +69,7 @@ const SignIn = () => {
 
     try {
       dispatch(signInStart());
-      const res=await axios.post('/api/auth/sign-in',formData);
+      const res=await axiosInstance.post('/api/auth/sign-in',formData);
       console.log(res.data);
       if(res.data.success){
         dispatch(signInSuccess(res.data.user));

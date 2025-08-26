@@ -1,33 +1,36 @@
-import React, { useState,useRef,useEffect } from "react";
-import { useSelector } from "react-redux";
-import { Edit3, X, Save, User, Mail, Lock, Camera } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { useSelector,useDispatch } from "react-redux";
+import { Edit3, X, Save, User, Mail, Camera } from "lucide-react";
+import { updateuserStart,updateuserSuccess,updateuserFailure } from "../features/userSlice";
+import { axiosInstance } from "../config/api";
 
-export default function Profile_form() {
+export default function ProfileForm() {
   const fileRef = useRef(null);
   const currentUser = useSelector((state) => state.user.currentUser);
-
-  const [userData] = useState({
-    username: currentUser.username,
-    email: currentUser.email,
-    password: currentUser.password,
-    profilePicture: currentUser.profilePicture || "https://via.placeholder.com/150",
-    bio: "Dream house found! Welcome to your perfect home.",
-  });
+  const dispatch = useDispatch();
+const userData = {
+  username: currentUser.username,
+  email: currentUser.email,
+  profilePicture: currentUser.profilePicture || "https://via.placeholder.com/150",
+  bio: currentUser.bio || "Dream house found! Welcome to your perfect home.",
+};
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(userData);
   const [loading, setLoading] = useState(false);
-  const [image,setImage] =useState(undefined);
-  console.log(image);
-  useEffect(()=>{
-    if(image){
+  const [image, setImage] = useState(undefined);
+
+  useEffect(() => {
+    if (image) {
       handleFileUpload(image);
     }
+  }, [image]);
 
-  },[image])
-  const handleFileUpload = async(image) =>{
+  const handleFileUpload = async (image) => {
     
-  }
+    console.log("File ready to upload:", image);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -36,48 +39,62 @@ export default function Profile_form() {
     }));
   };
 
-  const handleSaveProfile = async () => {
+  const handleSaveProfile = async (e) => {
+    e.preventDefault(); 
     setLoading(true);
     try {
+
+      const res= await axiosInstance.post(`/update/${currentUser.userId}`,
+        formData
+      );
       
       console.log("Profile saved:", formData);
       setIsEditing(false);
     } catch (error) {
+      dispatch(updateuserFailure(error.message));
       console.error("Error saving profile:", error);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   return (
     <div className="h-full">
       <div className="bg-white rounded-xl p-8 border border-gray-300 shadow-2xl relative">
-        
+       
         <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
-          <input type="file" ref={fileRef} hidden accept="image/*" onChange={(e)=>setImage(e.target.files[0])}/>
+          <input
+            type="file"
+            ref={fileRef}
+            hidden
+            accept="image/*"
+            onChange={(e) => setImage(e.target.files[0])}
+          />
           <img
             src={formData.profilePicture}
             alt={formData.username || "User Profile"}
-            className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-lg  cursor-pointer"
-            onClick={()=> fileRef.current.click()}
+            className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-lg cursor-pointer"
+            onClick={() => fileRef.current.click()}
           />
           {isEditing && (
             <button
+              type="button"
               className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full shadow-md hover:bg-blue-600 transition"
-              onClick={() => alert("Change profile picture functionality not implemented yet.")}
+              onClick={() =>
+                alert("Change profile picture functionality not implemented yet.")
+              }
             >
               <Camera className="w-5 h-5" />
             </button>
           )}
         </div>
 
-        
+       
         <div className="mt-20">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-2xl font-semibold text-gray-800">
               Profile Information
             </h3>
             <button
+              type="button"
               onClick={() => {
                 if (isEditing) {
                   setFormData(userData);
@@ -100,8 +117,9 @@ export default function Profile_form() {
             </button>
           </div>
 
-          <div className="space-y-6">
-            
+          
+          <form onSubmit={handleSaveProfile} className="space-y-6">
+           
             <div>
               <label className="block text-gray-700 text-sm mb-2">Username</label>
               <div className="relative">
@@ -111,7 +129,7 @@ export default function Profile_form() {
                   value={formData.username}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="w-full bg-gray-100 border border-gray-300 rounded-xl px-12 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:border-blue-400 focus:bg-white transition-all duration-300 disabled:opacity-50"
+                  className="w-full bg-gray-100 border border-gray-300 rounded-xl px-12 py-3 text-gray-800 focus:outline-none focus:border-blue-400 focus:bg-white transition-all duration-300 disabled:opacity-50"
                 />
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
               </div>
@@ -127,31 +145,29 @@ export default function Profile_form() {
                   value={formData.email}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="w-full bg-gray-100 border border-gray-300 rounded-xl px-12 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:border-blue-400 focus:bg-white transition-all duration-300 disabled:opacity-50"
+                  className="w-full bg-gray-100 border border-gray-300 rounded-xl px-12 py-3 text-gray-800 focus:outline-none focus:border-blue-400 focus:bg-white transition-all duration-300 disabled:opacity-50"
                 />
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
               </div>
             </div>
 
-           
+            
             <div>
               <label className="block text-gray-700 text-sm mb-2">Bio</label>
-              <div className="relative">
-                <textarea
-                  name="bio"
-                  value={formData.bio}
-                  readOnly
-                  disabled
-                  rows={3}
-                  className="w-full bg-gray-100 border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:border-blue-400 focus:bg-white transition-all duration-300 resize-none"
-                />
-              </div>
+              <textarea
+                name="bio"
+                value={formData.bio}
+                readOnly
+                disabled
+                rows={3}
+                className="w-full bg-gray-100 border border-gray-300 rounded-xl px-4 py-3 text-gray-800 resize-none"
+              />
             </div>
 
-            
+           
             {isEditing && (
               <button
-                onClick={handleSaveProfile}
+                type="submit"
                 disabled={loading}
                 className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
               >
@@ -159,7 +175,7 @@ export default function Profile_form() {
                 <span>{loading ? "Saving..." : "Save Changes"}</span>
               </button>
             )}
-          </div>
+          </form>
         </div>
       </div>
     </div>

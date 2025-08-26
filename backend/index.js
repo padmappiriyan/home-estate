@@ -6,16 +6,24 @@ import authRoutes from "./routes/auth-route.js";
 import cloudinaryConnect from './config/cloudinary.js';
 import cookieParser from 'cookie-parser';
 import userRoutes from './routes/user-route.js';
+import cors from "cors";
 
 const app=express();
 connectDB();
 cloudinaryConnect();
+app.use(cors({
+  origin: "http://localhost:5174", 
+  credentials: true,               
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 
 app.listen(3000,()=>{
     console.log('Server is running on port 3000');
 })
+
+
 
 app.get("/", (req, res) => {
   res.send("API is running...");

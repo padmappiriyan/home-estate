@@ -64,7 +64,7 @@ export const signUp = async (req, res, next) => {
 export const signin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
+    
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -95,6 +95,7 @@ export const signin = async (req, res, next) => {
       success: true,
       message: "User signed in successfully",
       user: {
+        userId:existingUser._id,
         username: existingUser.username,
         email: existingUser.email,
       },
@@ -107,7 +108,7 @@ export const signin = async (req, res, next) => {
 export const googlesignin = async (req, res, next) => {
   try {
     const { name, email, image } = req.body;
-
+    console.log(name);
     if (!email) {
       return res.status(400).json({
         success: false,
@@ -125,6 +126,7 @@ export const googlesignin = async (req, res, next) => {
         success: true,
         message: "User signed in successfully",
         user: {
+          userId:user._id,
           username: user.username,
           email: user.email,
           profilePicture: user.profilePicture,
@@ -151,6 +153,7 @@ export const googlesignin = async (req, res, next) => {
       success: true,
       message: "User signed in successfully",
       user: {
+        userId:user._id,
         username: user.username,
         email: user.email,
         profilePicture: user.profilePicture,
