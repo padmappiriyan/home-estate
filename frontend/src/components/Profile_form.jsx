@@ -1,22 +1,24 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Edit3, X, Save, User, Mail, Camera } from "lucide-react";
-import { updateuserStart,updateuserSuccess,updateuserFailure } from "../features/userSlice";
+import { updateuserFailure } from "../features/userSlice";
 import { axiosInstance } from "../config/api";
 
 export default function ProfileForm() {
   const fileRef = useRef(null);
   const currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
-const userData = {
-  username: currentUser.username,
-  email: currentUser.email,
-  profilePicture: currentUser.profilePicture || "https://via.placeholder.com/150",
-  bio: currentUser.bio || "Dream house found! Welcome to your perfect home.",
-};
+
+  // State for editable form data
+  const [formData, setFormData] = useState({
+    username: currentUser.username,
+    email: currentUser.email,
+    profilePicture:
+      currentUser.profilePicture || "https://via.placeholder.com/150",
+    bio: currentUser.bio || "Dream house found! Welcome to your perfect home.",
+  });
 
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(userData);
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(undefined);
 
@@ -26,9 +28,13 @@ const userData = {
     }
   }, [image]);
 
-  const handleFileUpload = async (image) => {
-    
-    console.log("File ready to upload:", image);
+  const handleFileUpload = async (file) => {
+    console.log("File ready to upload:", file);
+    // Example: preview update
+    setFormData((prev) => ({
+      ...prev,
+      profilePicture: URL.createObjectURL(file),
+    }));
   };
 
   const handleInputChange = (e) => {
@@ -40,26 +46,35 @@ const userData = {
   };
 
   const handleSaveProfile = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     setLoading(true);
-    try {
 
-      const res= await axiosInstance.post(`/update/${currentUser.userId}`,
-        formData
+    try {
+      const uploadData = new FormData();
+      uploadData.append("username", formData.username);
+      uploadData.append("email", formData.email);
+      if (image) uploadData.append("image", image);
+
+      const res = await axiosInstance.post(
+        `/update/${currentUser.userId}`,
+        uploadData,
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
-      
-      console.log("Profile saved:", formData);
+
+      console.log("Profile saved:", res.data);
       setIsEditing(false);
     } catch (error) {
       dispatch(updateuserFailure(error.message));
       console.error("Error saving profile:", error);
-    } 
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="h-full">
       <div className="bg-white rounded-xl p-8 border border-gray-300 shadow-2xl relative">
-       
+        {/* Profile Image */}
         <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
           <input
             type="file"
@@ -78,16 +93,14 @@ const userData = {
             <button
               type="button"
               className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full shadow-md hover:bg-blue-600 transition"
-              onClick={() =>
-                alert("Change profile picture functionality not implemented yet.")
-              }
+              onClick={() => fileRef.current.click()}
             >
               <Camera className="w-5 h-5" />
             </button>
           )}
         </div>
 
-       
+        
         <div className="mt-20">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-2xl font-semibold text-gray-800">
@@ -97,7 +110,17 @@ const userData = {
               type="button"
               onClick={() => {
                 if (isEditing) {
-                  setFormData(userData);
+                  
+                  setFormData({
+                    username: currentUser.username,
+                    email: currentUser.email,
+                    profilePicture:
+                      currentUser.profilePicture ||
+                      "https://via.placeholder.com/150",
+                    bio:
+                      currentUser.bio ||
+                      "Dream house found! Welcome to your perfect home.",
+                  });
                 }
                 setIsEditing(!isEditing);
               }}
@@ -117,11 +140,12 @@ const userData = {
             </button>
           </div>
 
-          
           <form onSubmit={handleSaveProfile} className="space-y-6">
            
             <div>
-              <label className="block text-gray-700 text-sm mb-2">Username</label>
+              <label className="block text-gray-700 text-sm mb-2">
+                Username
+              </label>
               <div className="relative">
                 <input
                   type="text"
@@ -135,7 +159,7 @@ const userData = {
               </div>
             </div>
 
-           
+            
             <div>
               <label className="block text-gray-700 text-sm mb-2">Email</label>
               <div className="relative">
@@ -151,7 +175,7 @@ const userData = {
               </div>
             </div>
 
-            
+           
             <div>
               <label className="block text-gray-700 text-sm mb-2">Bio</label>
               <textarea
@@ -164,7 +188,6 @@ const userData = {
               />
             </div>
 
-           
             {isEditing && (
               <button
                 type="submit"
