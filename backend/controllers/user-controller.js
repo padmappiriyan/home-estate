@@ -10,10 +10,8 @@ export const updateUser = async (req,res,next)=>{
            })
       }
       try{
-          
-        
-         const imageUrl = req.file ? req.file.path : "https://www.lasalle.edu/wp-content/uploads/2023/03/default-profile-photo-30-300x300.png" ;
-         console.log(imageUrl);
+         const imageUrl = req.file ? req.file.path : "https://www.lasalle.edu/wp-content/uploads/2023/03/default-profile-photo-30-300x300.png";
+       
          const updateUser= await User.findByIdAndUpdate(req.params.id,{
             $set:{
                 username:req.body.username,
@@ -27,7 +25,9 @@ export const updateUser = async (req,res,next)=>{
             message:"User Updated successfully",
             user:{
                 username:updateUser.username,
-                email:updateUser.email
+                email:updateUser.email,
+                profilePicture:updateUser.profilePicture,
+                userId:updateUser._id
             }
          })
       }
