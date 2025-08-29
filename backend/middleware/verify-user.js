@@ -1,13 +1,15 @@
 import jwt from 'jsonwebtoken';
 
 export const verify_token = async(req,res,next)=>{
+    
     try{
-        const token =req.cookie.access_token;
+        const token =req.cookies.access_token;
+       
       if(!token){
 
        return res.json({
             success:false,
-            message:Unauthorized
+            message:"Unauthorized"
             })
       }
       jwt.verify(token,process.env.JWT_SECRET,(err,decoded)=>{
@@ -18,12 +20,14 @@ export const verify_token = async(req,res,next)=>{
             })
         }
          req.user=decoded;
+         console.log(req.user);
          next();
       })
      
       
     }
     catch(error){
+        
         next(error);
     }
       
