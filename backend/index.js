@@ -3,14 +3,14 @@ import dotenv from "dotenv";
 dotenv.config();
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth-route.js";
-import cloudinaryConnect from './config/cloudinary.js';
+
 import cookieParser from 'cookie-parser';
 import userRoutes from './routes/user-route.js';
 import cors from "cors";
 
 const app=express();
 connectDB();
-cloudinaryConnect();
+
 app.use(cors({
   origin: "http://localhost:5173", 
   credentials: true,               
