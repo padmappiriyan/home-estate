@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Edit3, X, Save, User, Mail, Camera } from "lucide-react";
-import { updateuserFailure } from "../features/userSlice";
+import { updateuserFailure, updateuserSuccess } from "../features/userSlice";
 import { axiosInstance } from "../config/api";
 
 export default function ProfileForm() {
@@ -9,12 +9,10 @@ export default function ProfileForm() {
   const currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
 
-  // State for editable form data
   const [formData, setFormData] = useState({
     username: currentUser.username,
     email: currentUser.email,
-    profilePicture:
-      currentUser.profilePicture || "https://via.placeholder.com/150",
+    profilePicture: currentUser.profilePicture || "https://via.placeholder.com/150",
     bio: currentUser.bio || "Dream house found! Welcome to your perfect home.",
   });
 
@@ -24,18 +22,14 @@ export default function ProfileForm() {
 
   useEffect(() => {
     if (image) {
-      handleFileUpload(image);
+      const previewUrl = URL.createObjectURL(image);
+      setFormData((prev) => ({
+        ...prev,
+        profilePicture: previewUrl,
+      }));
+      return () => URL.revokeObjectURL(previewUrl); 
     }
   }, [image]);
-
-  const handleFileUpload = async (file) => {
-    console.log("File ready to upload:", file);
-    // Example: preview update
-    setFormData((prev) => ({
-      ...prev,
-      profilePicture: URL.createObjectURL(file),
-    }));
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,16 +47,18 @@ export default function ProfileForm() {
       const uploadData = new FormData();
       uploadData.append("username", formData.username);
       uploadData.append("email", formData.email);
-      if (image) uploadData.append("image", image);
+      if (image) uploadData.append("profileImage", image);
 
       const res = await axiosInstance.post(
-        `/update/${currentUser.userId}`,
+        `/api/user/update/${currentUser.userId}`,
         uploadData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      console.log("Profile saved:", res.data);
+      
+      dispatch(updateuserSuccess(res.data.user));
       setIsEditing(false);
+      setImage(undefined); 
     } catch (error) {
       dispatch(updateuserFailure(error.message));
       console.error("Error saving profile:", error);
@@ -71,10 +67,21 @@ export default function ProfileForm() {
     }
   };
 
+  const handleCancelEdit = () => {
+    setFormData({
+      username: currentUser.username,
+      email: currentUser.email,
+      profilePicture: currentUser.profilePicture || "https://via.placeholder.com/150",
+      bio: currentUser.bio || "Dream house found! Welcome to your perfect home.",
+    });
+    setImage(undefined);
+    setIsEditing(false);
+  };
+
   return (
     <div className="h-full">
       <div className="bg-white rounded-xl p-8 border border-gray-300 shadow-2xl relative">
-        {/* Profile Image */}
+      
         <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
           <input
             type="file"
@@ -100,7 +107,7 @@ export default function ProfileForm() {
           )}
         </div>
 
-        
+       
         <div className="mt-20">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-2xl font-semibold text-gray-800">
@@ -108,22 +115,7 @@ export default function ProfileForm() {
             </h3>
             <button
               type="button"
-              onClick={() => {
-                if (isEditing) {
-                  
-                  setFormData({
-                    username: currentUser.username,
-                    email: currentUser.email,
-                    profilePicture:
-                      currentUser.profilePicture ||
-                      "https://via.placeholder.com/150",
-                    bio:
-                      currentUser.bio ||
-                      "Dream house found! Welcome to your perfect home.",
-                  });
-                }
-                setIsEditing(!isEditing);
-              }}
+              onClick={isEditing ? handleCancelEdit : () => setIsEditing(true)}
               className="flex items-center space-x-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-600 px-4 py-2 rounded-xl border border-blue-400/30 transition-colors"
             >
               {isEditing ? (
@@ -141,11 +133,9 @@ export default function ProfileForm() {
           </div>
 
           <form onSubmit={handleSaveProfile} className="space-y-6">
-           
+            
             <div>
-              <label className="block text-gray-700 text-sm mb-2">
-                Username
-              </label>
+              <label className="block text-gray-700 text-sm mb-2">Username</label>
               <div className="relative">
                 <input
                   type="text"
@@ -159,7 +149,7 @@ export default function ProfileForm() {
               </div>
             </div>
 
-            
+           
             <div>
               <label className="block text-gray-700 text-sm mb-2">Email</label>
               <div className="relative">
@@ -188,6 +178,7 @@ export default function ProfileForm() {
               />
             </div>
 
+            
             {isEditing && (
               <button
                 type="submit"
