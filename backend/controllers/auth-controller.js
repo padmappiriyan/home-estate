@@ -3,7 +3,7 @@ import User from "../models/user-model.js";
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
 
-// Utility function to generate JWT token
+
 const generateToken = (id) => {
   if (!process.env.JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined");
