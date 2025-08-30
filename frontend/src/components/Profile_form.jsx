@@ -1,13 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Edit3, X, Save, User, Mail, Camera } from "lucide-react";
-import { updateuserFailure, updateuserSuccess } from "../features/userSlice";
+import { Edit3, X, Save, User, Mail, Camera, LogOut } from "lucide-react";
+import { updateuserFailure, updateuserSuccess ,signoutStart ,signoutSuccess ,signoutFailure} from "../features/userSlice";
 import { axiosInstance } from "../config/api";
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileForm() {
   const fileRef = useRef(null);
   const currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
+  const navigate =useNavigate();
 
   const [formData, setFormData] = useState({
     username: currentUser.username,
@@ -39,6 +41,23 @@ export default function ProfileForm() {
     }));
   };
 
+  const handlesignOut= async ()=>{
+    try{
+        console.log("signout functionality");
+        dispatch(signoutStart());
+        const res= await axiosInstance.get("/api/auth/signout");
+        if(res.data.success === false){
+               dispatch(signoutFailure(res.data.message));
+               return;
+        }
+        console.log(res.data);
+        dispatch(signoutSuccess({}));
+        navigate('/sign-in');
+    }catch(error){
+       dispatch(signoutFailure(error.message));
+      console.log(error);
+    }
+  }
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -108,7 +127,7 @@ export default function ProfileForm() {
         </div>
 
        
-        <div className="mt-20">
+        <div className="mt-20 space-y-4">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-2xl font-semibold text-gray-800">
               Profile Information
@@ -116,7 +135,7 @@ export default function ProfileForm() {
             <button
               type="button"
               onClick={isEditing ? handleCancelEdit : () => setIsEditing(true)}
-              className="flex items-center space-x-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-600 px-4 py-2 rounded-xl border border-blue-400/30 transition-colors"
+              className="flex items-center space-x-2 cursor-pointer bg-blue-500/20 hover:bg-blue-500/30 text-blue-600 px-4 py-2 rounded-xl border border-blue-400/30 transition-colors"
             >
               {isEditing ? (
                 <>
@@ -130,6 +149,7 @@ export default function ProfileForm() {
                 </>
               )}
             </button>
+            
           </div>
 
           <form onSubmit={handleSaveProfile} className="space-y-6">
@@ -190,7 +210,14 @@ export default function ProfileForm() {
               </button>
             )}
           </form>
+          <button type="button"
+             onClick={handlesignOut}
+              className="flex items-center   cursor-pointer space-x-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl transition-colors">
+             <LogOut className="w-4 h-4" />
+             <span>Sign Out</span>
+            </button>
         </div>
+        
       </div>
     </div>
   );
