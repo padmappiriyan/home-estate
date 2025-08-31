@@ -13,7 +13,7 @@ function App() {
   return (
     <div className=''>
     <BrowserRouter>
-      <Header />
+     <Header />
       <Routes>
         <Route key="home" path="/" element={<Home />} />
         <Route key="signin" path="/sign-in" element={<Signin />} />
